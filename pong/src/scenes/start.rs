@@ -52,8 +52,4 @@ impl scene::Scene<World, input::Event> for StartScene {
 
         Ok(())
     }
-
-    fn draw_previous(&self) -> bool {
-        true
-    }
 }

@@ -104,8 +104,4 @@ impl scene::Scene<World, input::Event> for ServeScene {
 
         Ok(())
     }
-
-    fn draw_previous(&self) -> bool {
-        true
-    }
 }

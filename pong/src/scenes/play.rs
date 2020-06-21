@@ -64,8 +64,4 @@ impl scene::Scene<World, input::Event> for PlayScene {
     fn draw(&mut self, _world: &World, _ctx: &mut Context) -> GameResult<()> {
         Ok(())
     }
-
-    fn draw_previous(&self) -> bool {
-        true
-    }
 }

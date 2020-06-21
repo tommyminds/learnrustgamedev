@@ -7,7 +7,7 @@ use ggez::{
 };
 use ggez_extras::{logging, util};
 use log::info;
-use specs::{World, WorldExt};
+use specs::{Builder, Join, World, WorldExt};
 
 mod components;
 mod input;
@@ -49,10 +49,50 @@ impl Game {
         world.insert(input::State::new());
         world.insert(sounds);
 
+        world
+            .create_entity()
+            .with(components::Player {
+                name: String::from("1"),
+                side: Side::Left,
+                score: 0,
+            })
+            .with(components::Position { x: 10.0, y: 30.0 })
+            .with(components::Size { w: 5.0, h: 20.0 })
+            .with(components::Scored(false))
+            .with(components::Won(false))
+            .with(components::Serving(true))
+            .build();
+
+        world
+            .create_entity()
+            .with(components::Player {
+                name: String::from("2"),
+                side: Side::Right,
+                score: 0,
+            })
+            .with(components::Position {
+                x: VIRTUAL_WIDTH - 10.0,
+                y: VIRTUAL_HEIGHT - 50.0,
+            })
+            .with(components::Size { w: 5.0, h: 20.0 })
+            .with(components::Scored(false))
+            .with(components::Won(false))
+            .with(components::Serving(false))
+            .build();
+
+        world
+            .create_entity()
+            .with(components::Ball {})
+            .with(components::Position {
+                x: VIRTUAL_WIDTH / 2.0 - 2.0,
+                y: VIRTUAL_HEIGHT / 2.0 - 2.0,
+            })
+            .with(components::Size { w: 4.0, h: 4.0 })
+            .with(components::Velocity::default())
+            .build();
+
         let mut scenestack = scenes::Stack::new(ctx);
-        let base_scene = Box::new(scenes::BaseScene::new(ctx, &mut world));
         let start_scene = Box::new(scenes::StartScene::new(ctx, &mut world));
-        scenestack.push(base_scene);
         scenestack.push(start_scene);
 
         Ok(Self {
@@ -75,6 +115,49 @@ impl Game {
             mint::Point2 { x: 10.0, y: 10.0 },
             Some(graphics::Color::from_rgb(0, 255, 0)),
         );
+
+        Ok(())
+    }
+
+    fn draw_rects(&mut self, ctx: &mut Context) -> GameResult<()> {
+        for (pos, size) in (
+            &self.world.read_storage::<components::Position>(),
+            &self.world.read_storage::<components::Size>(),
+        )
+            .join()
+        {
+            let rect = graphics::Rect::new(pos.x, pos.y, size.w, size.h);
+            let draw_rect = graphics::Mesh::new_rectangle(
+                ctx,
+                graphics::DrawMode::fill(),
+                rect,
+                graphics::WHITE,
+            )?;
+            graphics::draw(ctx, &draw_rect, graphics::DrawParam::default())?;
+        }
+
+        Ok(())
+    }
+
+    fn draw_scores(&mut self, ctx: &mut Context) -> GameResult<()> {
+        let font_resource = &self.world.read_resource::<GameFont>();
+
+        for player in (&self.world.read_storage::<components::Player>()).join() {
+            let score_display =
+                graphics::Text::new((format!("{}", player.score), font_resource.font, 32.0));
+            let pos = match player.side {
+                Side::Left => mint::Point2 {
+                    x: VIRTUAL_WIDTH / 2.0 - 50.0,
+                    y: VIRTUAL_HEIGHT / 3.0,
+                },
+                Side::Right => mint::Point2 {
+                    x: VIRTUAL_WIDTH / 2.0 + 30.0,
+                    y: VIRTUAL_HEIGHT / 3.0,
+                },
+            };
+
+            graphics::queue_text(ctx, &score_display, pos, Some(graphics::WHITE));
+        }
 
         Ok(())
     }
@@ -105,6 +188,8 @@ impl event::EventHandler for Game {
 
         self.scenes.draw(&self.world, ctx);
 
+        self.draw_rects(ctx)?;
+        self.draw_scores(ctx)?;
         self.draw_fps(ctx)?;
 
         graphics::draw_queued_text(
