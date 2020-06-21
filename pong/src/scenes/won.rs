@@ -60,7 +60,7 @@ impl scene::Scene<World, input::Event> for WonScene {
                 let mut t1 = graphics::Text::new((
                     format!("Player {} wins!", player.name),
                     font_resource.font,
-                    32.0,
+                    28.0,
                 ));
                 let mut t2 =
                     graphics::Text::new(("Press Enter to restart!", font_resource.font, 16.0));
@@ -78,7 +78,7 @@ impl scene::Scene<World, input::Event> for WonScene {
                 graphics::queue_text(
                     ctx,
                     &t2,
-                    mint::Point2 { x: 0.0, y: 30.0 },
+                    mint::Point2 { x: 0.0, y: 40.0 },
                     Some(graphics::WHITE),
                 );
             }
