@@ -131,7 +131,6 @@ impl event::EventHandler for Game {
                 self.world
                     .write_resource::<input::State>()
                     .update_effect(e, true);
-                self.scenes.input(&mut self.world, e, true);
             }
         }
     }
@@ -146,7 +145,6 @@ impl event::EventHandler for Game {
             self.world
                 .write_resource::<input::State>()
                 .update_effect(e, false);
-            self.scenes.input(&mut self.world, e, false);
         }
     }
 }

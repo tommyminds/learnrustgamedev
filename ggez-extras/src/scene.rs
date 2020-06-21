@@ -15,7 +15,6 @@ pub enum SceneSwitch<C, E> {
 pub trait Scene<C, E> {
     fn update(&mut self, world: &mut C, ctx: &mut Context) -> SceneSwitch<C, E>;
     fn draw(&mut self, world: &C, ctx: &mut Context) -> GameResult<()>;
-    fn input(&mut self, world: &mut C, ev: E, started: bool);
 
     /// Only used for human-readable convenience (or not at all, tbh)
     fn name(&self) -> &str;
@@ -133,14 +132,5 @@ impl<C, E> SceneStack<C, E> {
     /// Draw the current scene.
     pub fn draw(&mut self, world: &C, ctx: &mut Context) {
         SceneStack::draw_scenes(&mut self.scenes, world, ctx)
-    }
-
-    /// Feeds the given input event to the current scene.
-    pub fn input(&mut self, world: &mut C, event: E, started: bool) {
-        let current_scene = &mut **self
-            .scenes
-            .last_mut()
-            .expect("Tried to do input for empty scene stack");
-        current_scene.input(world, event, started);
     }
 }

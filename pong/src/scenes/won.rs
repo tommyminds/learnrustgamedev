@@ -87,8 +87,6 @@ impl scene::Scene<World, input::Event> for WonScene {
         Ok(())
     }
 
-    fn input(&mut self, _world: &mut World, _e: input::Event, _started: bool) {}
-
     fn draw_previous(&self) -> bool {
         true
     }
