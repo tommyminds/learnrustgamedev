@@ -44,7 +44,7 @@ impl scene::Scene<World, input::Event> for WonScene {
     }
 
     fn draw(&mut self, world: &World, ctx: &mut Context) -> GameResult<()> {
-        let font_resource = &world.read_resource::<GameFont>();
+        let font_resource = &world.read_resource::<Fonts>();
         let bounds = mint::Point2 {
             x: VIRTUAL_WIDTH,
             y: f32::INFINITY,
@@ -59,11 +59,11 @@ impl scene::Scene<World, input::Event> for WonScene {
             if won.0 {
                 let mut t1 = graphics::Text::new((
                     format!("Player {} wins!", player.name),
-                    font_resource.font,
+                    font_resource.retro,
                     28.0,
                 ));
                 let mut t2 =
-                    graphics::Text::new(("Press Enter to restart!", font_resource.font, 16.0));
+                    graphics::Text::new(("Press Enter to restart!", font_resource.retro, 16.0));
 
                 t1.set_bounds(bounds, graphics::Align::Center);
                 t2.set_bounds(bounds, graphics::Align::Center);

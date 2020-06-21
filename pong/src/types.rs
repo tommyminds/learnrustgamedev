@@ -19,8 +19,8 @@ pub struct DeltaTime {
 }
 
 #[derive(Clone, Debug, Default)]
-pub struct GameFont {
-    pub font: graphics::Font,
+pub struct Fonts {
+    pub retro: graphics::Font,
 }
 
 #[derive(Debug)]

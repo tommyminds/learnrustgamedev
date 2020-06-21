@@ -34,20 +34,19 @@ pub struct Game {
 
 impl Game {
     fn new(ctx: &mut Context, _resource_path: &path::Path) -> GameResult<Game> {
-        let font = graphics::Font::new(ctx, "/fonts/font.ttf")?;
+        let mut world = World::new();
+        components::register(&mut world);
 
-        let sounds = Sounds {
+        world.insert(DeltaTime { delta: 0.0 });
+        world.insert(input::State::new());
+        world.insert(Fonts {
+            retro: graphics::Font::new(ctx, "/fonts/font.ttf")?,
+        });
+        world.insert(Sounds {
             paddle_hit: audio::Source::new(ctx, "/sounds/paddle_hit.wav")?,
             score: audio::Source::new(ctx, "/sounds/score.wav")?,
             wall_hit: audio::Source::new(ctx, "/sounds/wall_hit.wav")?,
-        };
-
-        let mut world = World::new();
-        components::register(&mut world);
-        world.insert(DeltaTime { delta: 0.0 });
-        world.insert(GameFont { font });
-        world.insert(input::State::new());
-        world.insert(sounds);
+        });
 
         world
             .create_entity()
@@ -103,11 +102,11 @@ impl Game {
     }
 
     fn draw_fps(&mut self, ctx: &mut Context) -> GameResult<()> {
-        let font_resource = &self.world.read_resource::<GameFont>();
+        let font_resource = &self.world.read_resource::<Fonts>();
 
         let fps = timer::fps(ctx);
         let fps_display =
-            graphics::Text::new((format!("FPS: {:.1}", fps), font_resource.font, 8.0));
+            graphics::Text::new((format!("FPS: {:.1}", fps), font_resource.retro, 8.0));
 
         graphics::queue_text(
             ctx,
@@ -140,11 +139,11 @@ impl Game {
     }
 
     fn draw_scores(&mut self, ctx: &mut Context) -> GameResult<()> {
-        let font_resource = &self.world.read_resource::<GameFont>();
+        let font_resource = &self.world.read_resource::<Fonts>();
 
         for player in (&self.world.read_storage::<components::Player>()).join() {
             let score_display =
-                graphics::Text::new((format!("{}", player.score), font_resource.font, 32.0));
+                graphics::Text::new((format!("{}", player.score), font_resource.retro, 32.0));
             let pos = match player.side {
                 Side::Left => mint::Point2 {
                     x: VIRTUAL_WIDTH / 2.0 - 50.0,
