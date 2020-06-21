@@ -30,23 +30,24 @@ impl scene::Scene<World, input::Event> for StartScene {
 
     fn draw(&mut self, world: &World, ctx: &mut Context) -> GameResult<()> {
         let font_resource = &world.read_resource::<Fonts>();
-        let bounds = mint::Point2 {
-            x: VIRTUAL_WIDTH,
-            y: f32::INFINITY,
-        };
 
-        let mut text = graphics::Text::new((
-            "Welcome to Pong!\nPress Enter to begin!",
-            font_resource.retro,
-            10.0,
-        ));
+        let t1 = graphics::Text::new(("Welcome to Pong!", font_resource.retro, 10.0));
+        let t2 = graphics::Text::new(("Press Enter to begin!", font_resource.retro, 10.0));
 
-        text.set_bounds(bounds, graphics::Align::Center);
+        let t1_x = (VIRTUAL_WIDTH / 2.0) - (t1.dimensions(ctx).0 / 2) as f32;
+        let t2_x = (VIRTUAL_WIDTH / 2.0) - (t2.dimensions(ctx).0 / 2) as f32;
 
         graphics::queue_text(
             ctx,
-            &text,
-            mint::Point2 { x: 0.0, y: 10.0 },
+            &t1,
+            mint::Point2 { x: t1_x, y: 10.0 },
+            Some(graphics::WHITE),
+        );
+
+        graphics::queue_text(
+            ctx,
+            &t2,
+            mint::Point2 { x: t2_x, y: 20.0 },
             Some(graphics::WHITE),
         );
 
