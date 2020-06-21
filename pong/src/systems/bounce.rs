@@ -1,13 +1,14 @@
 use ggez::graphics::Rect;
 use ggez_extras::util::collides;
 use rand::Rng;
-use specs::{Join, ReadStorage, System, WriteStorage};
+use specs::{Join, ReadStorage, System, WriteExpect, WriteStorage};
 
 use crate::*;
 
 pub struct BounceSystem;
 impl<'s> System<'s> for BounceSystem {
     type SystemData = (
+        WriteExpect<'s, Sounds>,
         ReadStorage<'s, components::Ball>,
         ReadStorage<'s, components::Player>,
         WriteStorage<'s, components::Position>,
@@ -15,7 +16,10 @@ impl<'s> System<'s> for BounceSystem {
         ReadStorage<'s, components::Size>,
     );
 
-    fn run(&mut self, (balls, players, mut positions, mut velocities, sizes): Self::SystemData) {
+    fn run(
+        &mut self,
+        (mut sounds, balls, players, mut positions, mut velocities, sizes): Self::SystemData,
+    ) {
         let mut rng = rand::thread_rng();
         let mut new_ball_x: f32 = 0.0;
         let mut new_ball_y: f32 = 0.0;
@@ -30,11 +34,13 @@ impl<'s> System<'s> for BounceSystem {
             if ball_pos.y <= 0.0 {
                 new_ball_y = 0.0;
                 ball_vel.y = -ball_vel.y;
+                let _ = sounds.wall_hit.play();
             }
             // Bounce from bottom
             else if ball_pos.y >= VIRTUAL_HEIGHT - ball_size.h {
                 new_ball_y = VIRTUAL_HEIGHT - ball_size.h;
                 ball_vel.y = -ball_vel.y;
+                let _ = sounds.wall_hit.play();
             }
 
             for (player, player_pos, player_size) in (&players, &positions, &sizes).join() {
@@ -64,6 +70,8 @@ impl<'s> System<'s> for BounceSystem {
                         ball_vel.y =
                             rng.gen_range(50.0, 100.0) * (player_pos.y + player_size.h) / ball_pos.y
                     }
+
+                    let _ = sounds.paddle_hit.play();
                 }
             }
         }

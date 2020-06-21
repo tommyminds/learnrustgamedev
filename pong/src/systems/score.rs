@@ -1,10 +1,11 @@
-use specs::{Join, ReadStorage, System, WriteStorage};
+use specs::{Join, ReadStorage, System, WriteExpect, WriteStorage};
 
 use crate::*;
 
-pub struct WinnerSystem;
-impl<'s> System<'s> for WinnerSystem {
+pub struct ScoreSystem;
+impl<'s> System<'s> for ScoreSystem {
     type SystemData = (
+        WriteExpect<'s, Sounds>,
         ReadStorage<'s, components::Ball>,
         WriteStorage<'s, components::Player>,
         ReadStorage<'s, components::Position>,
@@ -16,7 +17,7 @@ impl<'s> System<'s> for WinnerSystem {
 
     fn run(
         &mut self,
-        (balls, mut players, positions, sizes, mut serving, mut scored, mut won): Self::SystemData,
+        (mut sounds, balls, mut players, positions, sizes, mut serving, mut scored, mut won): Self::SystemData,
     ) {
         for (_, ball_pos, ball_size) in (&balls, &positions, &sizes).join() {
             if ball_pos.x < 0.0 {
@@ -28,12 +29,14 @@ impl<'s> System<'s> for WinnerSystem {
                         Side::Right => {
                             scored.0 = true;
                             player.score += 1;
-                            if player.score >= 10 {
+                            if player.score >= 3 {
                                 won.0 = true;
                             }
                         }
                     }
                 }
+
+                let _ = sounds.score.play();
             }
 
             if ball_pos.x + ball_size.w > VIRTUAL_WIDTH {
@@ -44,13 +47,15 @@ impl<'s> System<'s> for WinnerSystem {
                         Side::Left => {
                             scored.0 = true;
                             player.score += 1;
-                            if player.score >= 10 {
+                            if player.score >= 3 {
                                 won.0 = true;
                             }
                         }
                         Side::Right => serving.0 = true,
                     }
                 }
+
+                let _ = sounds.score.play();
             }
         }
     }

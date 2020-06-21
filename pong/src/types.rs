@@ -1,4 +1,4 @@
-use ggez::graphics::Font;
+use ggez::{audio, graphics};
 use specs::Entity;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -20,5 +20,12 @@ pub struct DeltaTime {
 
 #[derive(Clone, Debug, Default)]
 pub struct GameFont {
-    pub font: Font,
+    pub font: graphics::Font,
+}
+
+#[derive(Debug)]
+pub struct Sounds {
+    pub paddle_hit: audio::Source,
+    pub score: audio::Source,
+    pub wall_hit: audio::Source,
 }

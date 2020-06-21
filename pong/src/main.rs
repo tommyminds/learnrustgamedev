@@ -1,16 +1,19 @@
+use std::env;
+use std::path;
+
+use ggez::{
+    audio, audio::SoundSource, conf, event, graphics, mint, timer, Context, ContextBuilder,
+    GameResult,
+};
+use ggez_extras::{logging, util};
+use log::info;
+use specs::{World, WorldExt};
+
 mod components;
 mod input;
 mod scenes;
 mod systems;
 mod types;
-
-use std::env;
-use std::path;
-
-use ggez::{self, *};
-use ggez_extras::*;
-use log::*;
-use specs::*;
 
 use types::*;
 
@@ -33,11 +36,18 @@ impl Game {
     fn new(ctx: &mut Context, _resource_path: &path::Path) -> GameResult<Game> {
         let font = graphics::Font::new(ctx, "/fonts/font.ttf")?;
 
+        let sounds = Sounds {
+            paddle_hit: audio::Source::new(ctx, "/sounds/paddle_hit.wav")?,
+            score: audio::Source::new(ctx, "/sounds/score.wav")?,
+            wall_hit: audio::Source::new(ctx, "/sounds/wall_hit.wav")?,
+        };
+
         let mut world = World::new();
         components::register(&mut world);
         world.insert(DeltaTime { delta: 0.0 });
         world.insert(GameFont { font });
         world.insert(input::State::new());
+        world.insert(sounds);
 
         let mut scenestack = scenes::Stack::new(ctx);
         let base_scene = Box::new(scenes::BaseScene::new(ctx, &mut world));
@@ -46,7 +56,7 @@ impl Game {
         scenestack.push(start_scene);
 
         Ok(Self {
-            world: world,
+            world,
             scenes: scenestack,
             input_binding: input::create_input_binding(),
         })
@@ -63,7 +73,7 @@ impl Game {
             ctx,
             &fps_display,
             mint::Point2 { x: 10.0, y: 10.0 },
-            Some(graphics::WHITE),
+            Some(graphics::Color::from_rgb(0, 255, 0)),
         );
 
         Ok(())
@@ -91,7 +101,7 @@ impl event::EventHandler for Game {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        graphics::clear(ctx, graphics::Color::from_rgba(40, 45, 52, 255));
+        graphics::clear(ctx, graphics::Color::from_rgb(40, 45, 52));
 
         self.scenes.draw(&self.world, ctx);
 
@@ -118,7 +128,6 @@ impl event::EventHandler for Game {
     ) {
         if !repeat {
             if let Some(e) = self.input_binding.resolve(keycode) {
-                info!("keydown: {:?}", e);
                 self.world
                     .write_resource::<input::State>()
                     .update_effect(e, true);
@@ -134,7 +143,6 @@ impl event::EventHandler for Game {
         _keymod: event::KeyMods,
     ) {
         if let Some(e) = self.input_binding.resolve(keycode) {
-            info!("keyup: {:?}", e);
             self.world
                 .write_resource::<input::State>()
                 .update_effect(e, false);
@@ -160,6 +168,7 @@ fn main() -> GameResult {
         .window_mode(
             conf::WindowMode::default()
                 .dimensions(WINDOW_WIDTH, WINDOW_HEIGHT)
+                .resizable(true)
                 .borderless(false),
         )
         .add_resource_path(&resource_dir);

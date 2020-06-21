@@ -2,7 +2,7 @@ use ggez::{graphics, Context, GameResult};
 use ggez_extras::scene;
 use rand::Rng;
 
-use specs::World;
+use specs::{Join, World};
 
 use crate::*;
 
@@ -30,8 +30,8 @@ impl ServeScene {
             {
                 if serving.0 {
                     vel.x = match player.side {
-                        types::Side::Left => rng.gen_range(140.0, 200.0),
-                        types::Side::Right => -rng.gen_range(140.0, 200.0),
+                        types::Side::Left => rng.gen_range(180.0, 220.0),
+                        types::Side::Right => -rng.gen_range(180.0, 220.0),
                     }
                 }
             }

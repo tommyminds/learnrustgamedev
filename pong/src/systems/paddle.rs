@@ -1,5 +1,6 @@
+use specs::{Join, Read, ReadExpect, ReadStorage, System, WriteStorage};
+
 use crate::*;
-use specs::{Read, ReadExpect, ReadStorage, System, WriteStorage};
 
 pub struct PaddleSystem;
 impl<'s> System<'s> for PaddleSystem {

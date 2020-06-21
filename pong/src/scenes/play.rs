@@ -1,6 +1,6 @@
 use ggez::{Context, GameResult};
 use ggez_extras::scene;
-use specs::World;
+use specs::{Join, World};
 
 use crate::*;
 
@@ -20,7 +20,7 @@ impl PlayScene {
             .with(systems::PaddleSystem, "paddle", &[])
             .with(systems::BallSystem, "ball", &[])
             .with(systems::BounceSystem, "bounce", &["paddle", "ball"])
-            .with(systems::WinnerSystem, "winner", &["bounce"])
+            .with(systems::ScoreSystem, "score", &["bounce"])
             .build()
     }
 }
@@ -53,7 +53,7 @@ impl scene::Scene<World, input::Event> for PlayScene {
         }
 
         if to_done {
-            scenes::Switch::Replace(Box::new(scenes::ServeScene::new(ctx, world)))
+            scenes::Switch::Replace(Box::new(scenes::WonScene::new(ctx, world)))
         } else if to_serve {
             scenes::Switch::Replace(Box::new(scenes::ServeScene::new(ctx, world)))
         } else {
