@@ -52,13 +52,13 @@ impl<'s> System<'s> for BounceSystem {
                         // Bounce from left paddle
                         Side::Left => {
                             new_ball_x = player_pos.x + player_size.w;
-                            ball_vel.x = -ball_vel.x * 1.1;
+                            ball_vel.x = -ball_vel.x * 1.03;
                         }
 
                         // Bounce from right paddle
                         Side::Right => {
                             new_ball_x = player_pos.x - ball_size.w;
-                            ball_vel.x = -ball_vel.x * 1.1;
+                            ball_vel.x = -ball_vel.x * 1.03;
                         }
                     }
 

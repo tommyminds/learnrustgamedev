@@ -29,8 +29,8 @@ impl ServeScene {
             {
                 if serving.0 {
                     vel.x = match player.side {
-                        types::Side::Left => rng.gen_range(180.0, 220.0),
-                        types::Side::Right => -rng.gen_range(180.0, 220.0),
+                        types::Side::Left => rng.gen_range(120.0, 160.0),
+                        types::Side::Right => -rng.gen_range(120.0, 160.0),
                     }
                 }
             }

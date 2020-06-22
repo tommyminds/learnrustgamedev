@@ -17,7 +17,7 @@ mod types;
 
 use types::*;
 
-const DESIRED_FPS: u32 = 60;
+const DESIRED_UPS: u32 = 60;
 const WINDOW_WIDTH: f32 = 1280.0;
 const WINDOW_HEIGHT: f32 = 780.0;
 
@@ -51,11 +51,13 @@ impl Game {
             FontType::Flappy,
             graphics::Font::new(ctx, "/fonts/flappy.ttf")?,
         );
-
+        // We use a fixed DeltaTime for all our systems
+        world.insert(DeltaTime {
+            delta: 1.0 / DESIRED_UPS as f32,
+        });
         world.insert(fonts);
         world.insert(render_system);
         world.insert(input::State::new());
-        world.insert(DeltaTime { delta: 0.0 });
         world.insert(Sounds {
             explosion: audio::Source::new(ctx, "/sounds/explosion.wav")?,
             hurt: audio::Source::new(ctx, "/sounds/hurt.wav")?,
@@ -85,12 +87,13 @@ impl Game {
             .build();
 
         let ground_img = graphics::Image::new(ctx, "/images/ground.png")?;
+        let ground_dims = ground_img.dimensions();
         world
             .create_entity()
             .with(components::Render { visible: true })
             .with(components::Position {
                 x: 0.0,
-                y: VIRTUAL_HEIGHT - ground_img.dimensions().h,
+                y: VIRTUAL_HEIGHT - ground_dims.h,
                 z: 0,
             })
             .with(components::Image { image: ground_img })
@@ -99,7 +102,7 @@ impl Game {
                 h: VIRTUAL_HEIGHT,
             })
             .with(components::Parallax {
-                speed: BACKGROUND_SCROLL_SPEED,
+                speed: GROUND_SCROLL_SPEED,
                 looping_point: BACKGROUND_LOOPING_POINT,
             })
             .build();
@@ -126,8 +129,7 @@ impl event::EventHandler for Game {
             event::quit(ctx);
         }
 
-        while timer::check_update_time(ctx, DESIRED_FPS) {
-            self.world.write_resource::<DeltaTime>().delta = util::seconds(&timer::delta(ctx));
+        while timer::check_update_time(ctx, DESIRED_UPS) {
             self.scenes.update(&mut self.world, ctx);
             self.world.write_resource::<input::State>().update();
             self.world.maintain();
@@ -139,7 +141,9 @@ impl event::EventHandler for Game {
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         self.world
             .write_resource::<systems::RenderSystem>()
-            .run(ctx, &self.world)
+            .run(ctx, &self.world)?;
+
+        Ok(())
     }
 
     fn key_down_event(

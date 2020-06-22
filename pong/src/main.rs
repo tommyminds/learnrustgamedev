@@ -17,14 +17,14 @@ mod types;
 
 use types::*;
 
-const DESIRED_FPS: u32 = 60;
+const DESIRED_UPS: u32 = 60;
 const WINDOW_WIDTH: f32 = 1280.0;
 const WINDOW_HEIGHT: f32 = 780.0;
 
 const VIRTUAL_WIDTH: f32 = 432.0;
 const VIRTUAL_HEIGHT: f32 = 243.0;
 
-const PADDLE_SPEED: f32 = 200.0;
+const PADDLE_SPEED: f32 = 160.0;
 
 pub struct Game {
     world: World,
@@ -37,7 +37,10 @@ impl Game {
         let mut world = World::new();
         components::register(&mut world);
 
-        world.insert(DeltaTime { delta: 0.0 });
+        // We use a fixed DeltaTime for all our systems
+        world.insert(DeltaTime {
+            delta: 1.0 / DESIRED_UPS as f32,
+        });
         world.insert(input::State::new());
         world.insert(Fonts {
             retro: graphics::Font::new(ctx, "/fonts/font.ttf")?,
@@ -172,8 +175,7 @@ impl event::EventHandler for Game {
             event::quit(ctx);
         }
 
-        while timer::check_update_time(ctx, DESIRED_FPS) {
-            self.world.write_resource::<DeltaTime>().delta = util::seconds(&timer::delta(ctx));
+        while timer::check_update_time(ctx, DESIRED_UPS) {
             self.scenes.update(&mut self.world, ctx);
             self.world.write_resource::<input::State>().update();
             self.world.maintain();
