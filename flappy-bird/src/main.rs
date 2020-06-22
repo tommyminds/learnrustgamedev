@@ -29,6 +29,13 @@ const GROUND_SCROLL_SPEED: f32 = 60.0;
 
 const BACKGROUND_LOOPING_POINT: f32 = 568.0;
 
+const PIPE_SPEED: f32 = 60.0;
+const PIPE_WIDTH: f32 = 70.0;
+const PIPE_HEIGHT: f32 = 430.0;
+
+const BIRD_WIDTH: f32 = 38.0;
+const BIRD_HEIGHT: f32 = 24.0;
+
 pub struct Game {
     world: World,
     scenes: scenes::SceneStack,
@@ -42,6 +49,13 @@ impl Game {
 
         let render_system = systems::RenderSystem::new(&mut world);
 
+        let images = Images {
+            background: graphics::Image::new(ctx, "/images/background.png")?,
+            bird: graphics::Image::new(ctx, "/images/bird.png")?,
+            ground: graphics::Image::new(ctx, "/images/ground.png")?,
+            pipe: graphics::Image::new(ctx, "/images/pipe.png")?,
+        };
+
         let mut fonts = Fonts::new();
         fonts.insert(
             FontType::Retro,
@@ -51,11 +65,13 @@ impl Game {
             FontType::Flappy,
             graphics::Font::new(ctx, "/fonts/flappy.ttf")?,
         );
+
         // We use a fixed DeltaTime for all our systems
         world.insert(DeltaTime {
             delta: 1.0 / DESIRED_UPS as f32,
         });
         world.insert(fonts);
+        world.insert(images.clone());
         world.insert(render_system);
         world.insert(input::State::new());
         world.insert(Sounds {
@@ -69,7 +85,7 @@ impl Game {
             .create_entity()
             .with(components::Render { visible: true })
             .with(components::Image {
-                image: graphics::Image::new(ctx, "/images/background.png")?,
+                image: images.background,
             })
             .with(components::Position {
                 x: 0.0,
@@ -96,7 +112,9 @@ impl Game {
                 y: VIRTUAL_HEIGHT - ground_dims.h,
                 z: 0,
             })
-            .with(components::Image { image: ground_img })
+            .with(components::Image {
+                image: images.ground,
+            })
             .with(components::Size {
                 w: VIRTUAL_WIDTH,
                 h: VIRTUAL_HEIGHT,

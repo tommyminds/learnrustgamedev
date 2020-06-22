@@ -24,6 +24,14 @@ pub struct Size {
     pub h: f32,
 }
 
+#[derive(Clone, Debug, Component)]
+#[storage(VecStorage)]
+pub struct Rotation {
+    pub deg: f32,
+    pub x: f32,
+    pub y: f32,
+}
+
 #[derive(Clone, Debug)]
 pub struct Render {
     pub visible: bool,
@@ -60,13 +68,26 @@ pub struct Parallax {
 #[storage(VecStorage)]
 pub struct Player;
 
+#[derive(Clone, Debug, Component, Default)]
+#[storage(VecStorage)]
+pub struct Pipe {
+    pub scored: bool,
+}
+
+#[derive(Clone, Debug, Component, Default)]
+#[storage(VecStorage)]
+pub struct Score(pub u8);
+
 pub fn register(world: &mut World) {
     world.register::<Position>();
     world.register::<Velocity>();
     world.register::<Size>();
+    world.register::<Rotation>();
     world.register::<Render>();
     world.register::<Player>();
+    world.register::<Pipe>();
     world.register::<Image>();
     world.register::<Text>();
+    world.register::<Score>();
     world.register::<Parallax>();
 }

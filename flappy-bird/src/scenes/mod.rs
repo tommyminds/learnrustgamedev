@@ -79,12 +79,7 @@ impl SceneStack {
         scene.on_leave(world).expect("error popping scene");
 
         if let Some(Some(scene_entities)) = self.entities.pop() {
-            let entities = world.entities_mut();
-            for entity in scene_entities.iter() {
-                if let Err(e) = entities.delete(*entity) {
-                    error!("unable to delete entity on scene leave: {}", e)
-                }
-            }
+            let _ = world.delete_entities(scene_entities.as_slice());
         }
 
         scene

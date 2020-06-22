@@ -6,6 +6,14 @@ pub struct DeltaTime {
     pub delta: f32,
 }
 
+#[derive(Clone, Debug)]
+pub struct Images {
+    pub background: graphics::Image,
+    pub bird: graphics::Image,
+    pub ground: graphics::Image,
+    pub pipe: graphics::Image,
+}
+
 #[derive(Debug)]
 pub struct Sounds {
     pub explosion: audio::Source,

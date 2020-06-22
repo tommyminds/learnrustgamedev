@@ -70,10 +70,11 @@ impl RenderSystem {
         graphics::clear(ctx, graphics::Color::from_rgb(40, 45, 52));
         self.sort_entities(world);
 
-        for (render, pos, size, image, text) in (
+        for (render, pos, size, rotation, image, text) in (
             &world.read_storage::<components::Render>(),
             &world.read_storage::<components::Position>(),
             (&world.read_storage::<components::Size>()).maybe(),
+            (&world.read_storage::<components::Rotation>()).maybe(),
             (&world.read_storage::<components::Image>()).maybe(),
             (&world.read_storage::<components::Text>()).maybe(),
         )
@@ -84,8 +85,20 @@ impl RenderSystem {
             }
 
             if let Some(image) = image {
-                let draw_params =
-                    graphics::DrawParam::default().dest(Point2 { x: pos.x, y: pos.y });
+                let mut draw_params =
+                    graphics::DrawParam::new().dest(Point2 { x: pos.x, y: pos.y });
+
+                if let Some(rotation) = rotation {
+                    let image_dims = image.image.dimensions();
+                    draw_params = graphics::DrawParam::new()
+                        .offset(Point2 {
+                            x: rotation.x,
+                            y: rotation.y,
+                        })
+                        .rotation(rotation.deg)
+                        .dest(Point2 { x: pos.x, y: pos.y });
+                }
+
                 graphics::draw(ctx, &image.image, draw_params)?;
             } else if let Some(text) = text {
                 let font = *world
