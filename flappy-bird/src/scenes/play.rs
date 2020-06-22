@@ -1,6 +1,6 @@
 use ggez::Context;
 use rand::Rng;
-use specs::{Dispatcher, DispatcherBuilder, Entity, World, WorldExt, Join};
+use specs::{Dispatcher, DispatcherBuilder, Entity, Join, World, WorldExt};
 
 use crate::*;
 
@@ -18,17 +18,32 @@ pub struct PlayScene {
 }
 
 impl scenes::Scene for PlayScene {
-    fn update(&mut self, world: &mut World, ctx: &mut Context) -> scenes::SceneSwitch {
+    fn update(&mut self, world: &mut World, _ctx: &mut Context) -> scenes::SceneSwitch {
         self.dispatcher.dispatch(world);
+
+        let mut is_dead = false;
+        for dead in (&world.read_storage::<components::Dead>()).join() {
+            is_dead = dead.0;
+        }
 
         if world
             .read_resource::<input::State>()
             .get_button_released(input::Button::Enter)
         {
-            scenes::SceneSwitch::replace(scenes::TitleScene::new(ctx, world))
+            scenes::SceneSwitch::replace(scenes::TitleScene::new())
+        } else if is_dead {
+            let mut final_score = 0;
+            for score in (&world.read_storage::<components::Score>()).join() {
+                final_score = score.0;
+            }
+            scenes::SceneSwitch::replace(scenes::ScoreScene::new(final_score))
         } else {
             for score in (world.read_storage::<components::Score>()).join() {
-                world.write_storage::<components::Text>().get_mut(self.score_entity.unwrap()).unwrap().text = format!("Score: {}", score.0)
+                world
+                    .write_storage::<components::Text>()
+                    .get_mut(self.score_entity.unwrap())
+                    .unwrap()
+                    .text = format!("Score: {}", score.0)
             }
 
             scenes::SceneSwitch::None
@@ -36,7 +51,29 @@ impl scenes::Scene for PlayScene {
     }
 
     fn on_enter(&mut self, world: &mut World) -> GameResult<Option<Vec<Entity>>> {
-        let entities: Vec<Entity> = vec![self.create_score_text(world)];
+        let bird_image = world.read_resource::<Images>().bird.clone();
+
+        let entities: Vec<Entity> = vec![
+            self.create_score_text(world),
+            world
+                .create_entity()
+                .with(components::Player)
+                .with(components::Score(0))
+                .with(components::Dead(false))
+                .with(components::Render { visible: true })
+                .with(components::Image { image: bird_image })
+                .with(components::Size {
+                    w: BIRD_WIDTH,
+                    h: BIRD_HEIGHT,
+                })
+                .with(components::Velocity { x: 0.0, y: 0.0 })
+                .with(components::Position {
+                    x: VIRTUAL_WIDTH / 2.0 - 8.0,
+                    y: VIRTUAL_HEIGHT / 2.0 - 8.0,
+                    z: 1,
+                })
+                .build(),
+        ];
         Ok(Some(entities))
     }
 
@@ -67,8 +104,13 @@ impl PlayScene {
     fn register_systems() -> specs::Dispatcher<'static, 'static> {
         DispatcherBuilder::new()
             .with(systems::ParallaxSystem, "parallax", &[])
-            .with(systems::PhysicsSystem, "physics", &[])
+            .with(systems::PlayerSystem, "player", &[])
             .with(systems::PipeSystem::new(), "pipe", &[])
+            .with(
+                systems::ScoreSystem::new(),
+                "score_system",
+                &["pipe", "player"],
+            )
             .build()
     }
 

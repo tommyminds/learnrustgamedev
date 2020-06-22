@@ -1,15 +1,16 @@
 #![allow(dead_code)]
 
 use ggez::{Context, GameResult};
-use log::*;
 use specs::{Entity, World, WorldExt};
 
 pub mod countdown;
 pub mod play;
+pub mod score;
 pub mod title;
 
 pub use countdown::*;
 pub use play::*;
+pub use score::*;
 pub use title::*;
 
 /// A command to change to a new scene, either by pushign a new one,

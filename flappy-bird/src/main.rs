@@ -5,7 +5,7 @@ use ggez::{
     audio, audio::SoundSource, conf, event, graphics, mint, timer, Context, ContextBuilder,
     GameResult,
 };
-use ggez_extras::{logging, util};
+use ggez_extras::logging;
 use log::info;
 use specs::{Builder, World, WorldExt};
 
@@ -126,7 +126,7 @@ impl Game {
             .build();
 
         let mut scenestack = scenes::SceneStack::new(ctx);
-        let title_scene = Box::new(scenes::TitleScene::new(ctx, &mut world));
+        let title_scene = Box::new(scenes::TitleScene::new());
         scenestack.push(title_scene, &mut world);
 
         Ok(Self {

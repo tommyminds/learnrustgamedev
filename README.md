@@ -8,7 +8,7 @@ My goal is to implement all the 2D games (lecture 1-8) from that course in Rust 
 
 ## Implemented GD50 games
 - [x] Pong
-- [ ] Flappy Bird (in progress)
+- [x] Flappy Bird
 - [ ] Breakout
 - [ ] Match 3
 - [ ] Super Mario Bros
@@ -34,5 +34,9 @@ The idea is to try out some new features and concepts in each game, and make the
 ![](gifs/pong.gif)
 
 ### Flappy Bird
-- experiment with using a `RenderSystem` with z-index sorting
+- implement a `RenderSystem` with z-index sorting
 - render `images`
+- `rotate` images around their center
+- add a `parallax` effect system
+
+![](gifs/flappy_bird.gif)

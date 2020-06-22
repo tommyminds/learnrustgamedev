@@ -1,4 +1,4 @@
-use crate::types::{Alignment, FontType};
+use crate::types::{Alignment, FontType, PipeSide};
 use ggez::graphics;
 use specs::{Component, FlaggedStorage, VecStorage, World, WorldExt};
 
@@ -68,11 +68,16 @@ pub struct Parallax {
 #[storage(VecStorage)]
 pub struct Player;
 
-#[derive(Clone, Debug, Component, Default)]
+#[derive(Clone, Debug, Component)]
 #[storage(VecStorage)]
 pub struct Pipe {
     pub scored: bool,
+    pub side: PipeSide,
 }
+
+#[derive(Clone, Debug, Component)]
+#[storage(VecStorage)]
+pub struct Dead(pub bool);
 
 #[derive(Clone, Debug, Component, Default)]
 #[storage(VecStorage)]
@@ -86,6 +91,7 @@ pub fn register(world: &mut World) {
     world.register::<Render>();
     world.register::<Player>();
     world.register::<Pipe>();
+    world.register::<Dead>();
     world.register::<Image>();
     world.register::<Text>();
     world.register::<Score>();

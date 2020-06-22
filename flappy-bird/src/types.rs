@@ -37,3 +37,9 @@ pub enum Alignment {
     Right,
     Centered,
 }
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum PipeSide {
+    Top,
+    Bottom,
+}

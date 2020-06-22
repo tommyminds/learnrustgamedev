@@ -89,7 +89,6 @@ impl RenderSystem {
                     graphics::DrawParam::new().dest(Point2 { x: pos.x, y: pos.y });
 
                 if let Some(rotation) = rotation {
-                    let image_dims = image.image.dimensions();
                     draw_params = graphics::DrawParam::new()
                         .offset(Point2 {
                             x: rotation.x,

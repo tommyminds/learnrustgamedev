@@ -6,7 +6,7 @@ use crate::*;
 pub struct TitleScene;
 
 impl TitleScene {
-    pub fn new(_ctx: &mut Context, _world: &mut World) -> Self {
+    pub fn new() -> Self {
         Self {}
     }
 }

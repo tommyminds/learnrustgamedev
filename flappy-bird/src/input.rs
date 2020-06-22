@@ -6,10 +6,7 @@ use ggez_extras::input;
 pub enum Button {
     Enter,
     Quit,
-    LeftPlayerUp,
-    LeftPlayerDown,
-    RightPlayerUp,
-    RightPlayerDown,
+    Space,
 }
 
 pub type Binding = input::InputBinding<Button>;
@@ -18,10 +15,7 @@ pub type State = input::InputState<Button>;
 /// Create the default keybindings for our input state.
 pub fn create_input_binding() -> input::InputBinding<Button> {
     input::InputBinding::new()
-        .bind_key_to_button(KeyCode::W, Button::LeftPlayerUp)
-        .bind_key_to_button(KeyCode::S, Button::LeftPlayerDown)
-        .bind_key_to_button(KeyCode::Up, Button::RightPlayerUp)
-        .bind_key_to_button(KeyCode::Down, Button::RightPlayerDown)
+        .bind_key_to_button(KeyCode::Space, Button::Space)
         .bind_key_to_button(KeyCode::Return, Button::Enter)
         .bind_key_to_button(KeyCode::Escape, Button::Quit)
 }
