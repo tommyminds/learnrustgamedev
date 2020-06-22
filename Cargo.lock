@@ -586,6 +586,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "flappy-bird"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "fern",
+ "ggez",
+ "ggez-extras",
+ "log",
+ "rand 0.7.3",
+ "specs",
+ "specs-derive",
+ "specs_guided_join",
+]
+
+[[package]]
 name = "fnv"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2125,6 +2140,16 @@ dependencies = [
  "proc-macro2 1.0.18",
  "quote 1.0.7",
  "syn 1.0.31",
+]
+
+[[package]]
+name = "specs_guided_join"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9424783edde4a4b40b41a3353773cf4acdc5a89037cc399ec5180a98fbc70eb5"
+dependencies = [
+ "hibitset",
+ "specs",
 ]
 
 [[package]]

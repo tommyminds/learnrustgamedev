@@ -2,4 +2,5 @@
 members = [
     "ggez-extras",
     "pong",
+    "flappy-bird",
 ]

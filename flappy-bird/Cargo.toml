@@ -1,0 +1,16 @@
+[package]
+name = "flappy-bird"
+version = "0.1.0"
+authors = ["Tommy Maintz <tommy.maintz@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+ggez = "0.5"
+ggez-extras = { path = "../ggez-extras" }
+specs = {version = "0.16", features=["specs-derive"]}
+specs-derive = "0.4"
+log = "0.4"
+fern = {version = "0.5", features = ["colored"]}
+chrono = "0.4"
+rand = "0.7"
+specs_guided_join = "0.2"

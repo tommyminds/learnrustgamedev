@@ -8,7 +8,7 @@ My goal is to implement all the 2D games (lecture 1-8) from that course in Rust 
 
 ## Implemented GD50 games
 - [x] Pong
-- [ ] Flappy Bird
+- [ ] Flappy Bird (in progress)
 - [ ] Breakout
 - [ ] Match 3
 - [ ] Super Mario Bros
@@ -16,6 +16,18 @@ My goal is to implement all the 2D games (lecture 1-8) from that course in Rust 
 - [ ] Angry Birds
 - [ ] Pokemon
 
-## Other things I would like to learn and implement
-- [ ] Hot reloading of assets
-- [ ] Placeholder for so many things... :)
+## Progressive feature implementation
+
+The idea is to try out some new features and concepts in each game, and make them progressively more advanced in terms of ECS usage.
+
+### Pong
+- setup `ggez` and `Specs ECS` in rather basic way
+- handle basic `keyboard input`
+- uses the concept of `scenes`
+- load `custom fonts`
+- render `rectangle` and `text` entities in `draw` methods
+- uses `sounds` in various systems.
+
+### Flappy Bird
+- experiment with using a `RenderSystem` with z-index sorting
+- render `images`
