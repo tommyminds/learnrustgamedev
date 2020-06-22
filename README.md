@@ -16,6 +16,9 @@ My goal is to implement all the 2D games (lecture 1-8) from that course in Rust 
 - [ ] Angry Birds
 - [ ] Pokemon
 
+## Running the games
+Clone the repository and run `cargo run -p [game-name]`. E.g. to start pong run `cargo run -p pong`.
+
 ## Progressive feature implementation
 
 The idea is to try out some new features and concepts in each game, and make them progressively more advanced in terms of ECS usage.
@@ -27,6 +30,8 @@ The idea is to try out some new features and concepts in each game, and make the
 - load `custom fonts`
 - render `rectangle` and `text` entities in `draw` methods
 - uses `sounds` in various systems.
+
+![](gifs/pong.gif)
 
 ### Flappy Bird
 - experiment with using a `RenderSystem` with z-index sorting
