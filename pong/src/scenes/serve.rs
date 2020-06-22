@@ -37,6 +37,18 @@ impl ServeScene {
             vel.y = rng.gen_range(-50.0, 50.0);
         }
 
+        for (player, pos) in (
+            &world.read_storage::<components::Player>(),
+            &mut world.write_storage::<components::Position>(),
+        )
+            .join()
+        {
+            pos.y = match player.side {
+                types::Side::Left => 30.0,
+                types::Side::Right => VIRTUAL_HEIGHT - 50.0,
+            }
+        }
+
         Self {}
     }
 }
