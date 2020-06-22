@@ -16,10 +16,7 @@ impl CountdownScene {
         let count = 3u8;
         let text = world
             .create_entity()
-            .with(components::Render {
-                visible: true,
-                z_index: 1,
-            })
+            .with(components::Render { visible: true })
             .with(components::Text {
                 text: count.to_string(),
                 font: FontType::Flappy,
@@ -31,7 +28,11 @@ impl CountdownScene {
                 w: VIRTUAL_WIDTH,
                 h: f32::INFINITY,
             })
-            .with(components::Position { x: 0.0, y: 120.0 })
+            .with(components::Position {
+                x: 0.0,
+                y: 120.0,
+                z: 1,
+            })
             .build();
 
         Self {

@@ -27,10 +27,7 @@ impl scenes::Scene for TitleScene {
         Ok(Some(vec![
             world
                 .create_entity()
-                .with(components::Render {
-                    visible: true,
-                    z_index: 1,
-                })
+                .with(components::Render { visible: true })
                 .with(components::Text {
                     text: String::from("Fifty Bird"),
                     font: FontType::Flappy,
@@ -42,14 +39,15 @@ impl scenes::Scene for TitleScene {
                     w: VIRTUAL_WIDTH,
                     h: f32::INFINITY,
                 })
-                .with(components::Position { x: 0.0, y: 64.0 })
+                .with(components::Position {
+                    x: 0.0,
+                    y: 64.0,
+                    z: 1,
+                })
                 .build(),
             world
                 .create_entity()
-                .with(components::Render {
-                    visible: true,
-                    z_index: 1,
-                })
+                .with(components::Render { visible: true })
                 .with(components::Text {
                     text: String::from("Press Enter"),
                     font: FontType::Flappy,
@@ -61,7 +59,11 @@ impl scenes::Scene for TitleScene {
                     w: VIRTUAL_WIDTH,
                     h: f32::INFINITY,
                 })
-                .with(components::Position { x: 0.0, y: 100.0 })
+                .with(components::Position {
+                    x: 0.0,
+                    y: 100.0,
+                    z: 1,
+                })
                 .build(),
         ]))
     }

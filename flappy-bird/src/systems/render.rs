@@ -1,6 +1,6 @@
 use ggez::{Context, GameResult};
 use mint::Point2;
-use specs::{prelude::ComponentEvent, Entity, Join, ReaderId, World, WorldExt};
+use specs::{prelude::ComponentEvent, BitSet, Entity, Join, ReaderId, World, WorldExt};
 use specs_guided_join::GuidedJoin;
 
 use crate::*;
@@ -11,6 +11,8 @@ pub struct RenderSystem {
     sorted_entities: Vec<Entity>,
     dirty_sort: bool,
     show_fps: bool,
+    inserted: BitSet,
+    deleted: BitSet,
 }
 
 impl RenderSystem {
@@ -21,31 +23,46 @@ impl RenderSystem {
             sorted_entities: Vec::new(),
             dirty_sort: true,
             show_fps: true,
+            inserted: BitSet::new(),
+            deleted: BitSet::new(),
         }
     }
 
     fn sort_entities(&mut self, world: &World) {
-        let render_entities = &world.write_storage::<components::Render>();
+        self.inserted.clear();
+        self.deleted.clear();
+
+        let render_entities = world.write_storage::<components::Render>();
         for event in render_entities.channel().read(&mut self.reader_id) {
             match event {
-                ComponentEvent::Modified(_) | ComponentEvent::Inserted(_) => {
+                ComponentEvent::Modified(_) => {
                     self.dirty_sort = true;
                 }
-                _ => {}
+                ComponentEvent::Inserted(id) => {
+                    self.inserted.add(*id);
+                    self.dirty_sort = true;
+                }
+                ComponentEvent::Removed(id) => {
+                    self.deleted.add(*id);
+                }
             };
         }
 
-        if self.dirty_sort {
-            self.sorted_entities = Vec::new();
-            for (entity, _) in (&world.entities(), render_entities).join() {
-                self.sorted_entities.push(entity.clone());
-            }
+        for e in &self.deleted {
+            self.sorted_entities.retain(|r| r.id() != e);
+        }
 
+        for (e, _) in (&world.entities(), &self.inserted).join() {
+            self.sorted_entities.push(e);
+        }
+        if self.dirty_sort {
+            let pos_storage = &world.read_storage::<components::Position>();
             self.sorted_entities.sort_by(|a, b| {
-                let render_a = render_entities.get(*a).unwrap();
-                let render_b = render_entities.get(*b).unwrap();
-                render_a.z_index.cmp(&render_b.z_index)
+                let pos_a = pos_storage.get(*a).unwrap();
+                let pos_b = pos_storage.get(*b).unwrap();
+                pos_a.z.cmp(&pos_b.z)
             });
+            self.dirty_sort = false;
         }
     }
 

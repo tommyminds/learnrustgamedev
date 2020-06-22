@@ -7,6 +7,7 @@ use specs::{Component, FlaggedStorage, VecStorage, World, WorldExt};
 pub struct Position {
     pub x: f32,
     pub y: f32,
+    pub z: u32,
 }
 
 #[derive(Clone, Debug, Component, Default)]
@@ -26,7 +27,6 @@ pub struct Size {
 #[derive(Clone, Debug)]
 pub struct Render {
     pub visible: bool,
-    pub z_index: u32,
 }
 
 impl Component for Render {

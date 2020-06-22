@@ -65,14 +65,15 @@ impl Game {
 
         world
             .create_entity()
-            .with(components::Render {
-                visible: true,
-                z_index: 0,
-            })
+            .with(components::Render { visible: true })
             .with(components::Image {
                 image: graphics::Image::new(ctx, "/images/background.png")?,
             })
-            .with(components::Position { x: 0.0, y: 0.0 })
+            .with(components::Position {
+                x: 0.0,
+                y: 0.0,
+                z: 0,
+            })
             .with(components::Size {
                 w: VIRTUAL_WIDTH,
                 h: VIRTUAL_HEIGHT,
@@ -86,13 +87,11 @@ impl Game {
         let ground_img = graphics::Image::new(ctx, "/images/ground.png")?;
         world
             .create_entity()
-            .with(components::Render {
-                visible: true,
-                z_index: 1,
-            })
+            .with(components::Render { visible: true })
             .with(components::Position {
                 x: 0.0,
                 y: VIRTUAL_HEIGHT - ground_img.dimensions().h,
+                z: 0,
             })
             .with(components::Image { image: ground_img })
             .with(components::Size {
