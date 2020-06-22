@@ -1,6 +1,4 @@
 use ggez::{graphics, Context, GameResult};
-use ggez_extras::scene;
-
 use specs::{Join, World};
 
 use crate::*;
@@ -13,12 +11,8 @@ impl WonScene {
     }
 }
 
-impl scene::Scene<World, input::Event> for WonScene {
-    fn name(&self) -> &str {
-        "WonScene"
-    }
-
-    fn update(&mut self, world: &mut World, ctx: &mut Context) -> scenes::Switch {
+impl super::Scene for WonScene {
+    fn update(&mut self, world: &mut World, ctx: &mut Context) -> scenes::SceneSwitch {
         if world
             .read_resource::<input::State>()
             .get_button_released(input::Button::Enter)
@@ -37,9 +31,9 @@ impl scene::Scene<World, input::Event> for WonScene {
                 scored.0 = false;
             }
 
-            scenes::Switch::Replace(Box::new(scenes::ServeScene::new(ctx, world)))
+            scenes::SceneSwitch::replace(scenes::ServeScene::new(ctx, world))
         } else {
-            scenes::Switch::None
+            scenes::SceneSwitch::None
         }
     }
 

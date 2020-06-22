@@ -1,5 +1,4 @@
 use ggez::{graphics, Context, GameResult};
-use ggez_extras::scene;
 use rand::Rng;
 
 use specs::{Join, World};
@@ -42,12 +41,8 @@ impl ServeScene {
     }
 }
 
-impl scene::Scene<World, input::Event> for ServeScene {
-    fn name(&self) -> &str {
-        "ServeScene"
-    }
-
-    fn update(&mut self, world: &mut World, ctx: &mut Context) -> scenes::Switch {
+impl super::Scene for ServeScene {
+    fn update(&mut self, world: &mut World, ctx: &mut Context) -> scenes::SceneSwitch {
         if world
             .read_resource::<input::State>()
             .get_button_released(input::Button::Enter)
@@ -65,9 +60,9 @@ impl scene::Scene<World, input::Event> for ServeScene {
                 serving.0 = false;
             }
 
-            scenes::Switch::Replace(Box::new(scenes::PlayScene::new(ctx, world)))
+            scenes::SceneSwitch::replace(scenes::PlayScene::new(ctx, world))
         } else {
-            scenes::Switch::None
+            scenes::SceneSwitch::None
         }
     }
 

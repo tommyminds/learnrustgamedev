@@ -1,5 +1,4 @@
 use ggez::{graphics, Context, GameResult};
-use ggez_extras::scene;
 use specs::World;
 
 use crate::*;
@@ -12,19 +11,15 @@ impl StartScene {
     }
 }
 
-impl scene::Scene<World, input::Event> for StartScene {
-    fn name(&self) -> &str {
-        "StartScene"
-    }
-
-    fn update(&mut self, world: &mut World, ctx: &mut Context) -> scenes::Switch {
+impl super::Scene for StartScene {
+    fn update(&mut self, world: &mut World, ctx: &mut Context) -> scenes::SceneSwitch {
         if world
             .read_resource::<input::State>()
             .get_button_released(input::Button::Enter)
         {
-            scenes::Switch::Replace(Box::new(scenes::ServeScene::new(ctx, world)))
+            scenes::SceneSwitch::replace(scenes::ServeScene::new(ctx, world))
         } else {
-            scenes::Switch::None
+            scenes::SceneSwitch::None
         }
     }
 

@@ -28,7 +28,7 @@ const PADDLE_SPEED: f32 = 200.0;
 
 pub struct Game {
     world: World,
-    scenes: scenes::Stack,
+    scenes: scenes::SceneStack,
     input_binding: input::Binding,
 }
 
@@ -90,7 +90,7 @@ impl Game {
             .with(components::Velocity::default())
             .build();
 
-        let mut scenestack = scenes::Stack::new(ctx);
+        let mut scenestack = scenes::SceneStack::new(ctx);
         let start_scene = Box::new(scenes::StartScene::new(ctx, &mut world));
         scenestack.push(start_scene);
 

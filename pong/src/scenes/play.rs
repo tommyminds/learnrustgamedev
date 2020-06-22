@@ -1,5 +1,4 @@
 use ggez::{Context, GameResult};
-use ggez_extras::scene;
 use specs::{Join, World};
 
 use crate::*;
@@ -25,12 +24,8 @@ impl PlayScene {
     }
 }
 
-impl scene::Scene<World, input::Event> for PlayScene {
-    fn name(&self) -> &str {
-        "PlayScene"
-    }
-
-    fn update(&mut self, world: &mut World, ctx: &mut Context) -> scenes::Switch {
+impl super::Scene for PlayScene {
+    fn update(&mut self, world: &mut World, ctx: &mut Context) -> scenes::SceneSwitch {
         self.dispatcher.dispatch(world);
 
         let mut to_serve = false;
@@ -53,11 +48,11 @@ impl scene::Scene<World, input::Event> for PlayScene {
         }
 
         if to_done {
-            scenes::Switch::Replace(Box::new(scenes::WonScene::new(ctx, world)))
+            scenes::SceneSwitch::replace(scenes::WonScene::new(ctx, world))
         } else if to_serve {
-            scenes::Switch::Replace(Box::new(scenes::ServeScene::new(ctx, world)))
+            scenes::SceneSwitch::replace(scenes::ServeScene::new(ctx, world))
         } else {
-            scenes::Switch::None
+            scenes::SceneSwitch::None
         }
     }
 

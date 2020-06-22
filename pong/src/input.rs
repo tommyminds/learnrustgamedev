@@ -13,7 +13,6 @@ pub enum Button {
 }
 
 pub type Binding = input::InputBinding<Button>;
-pub type Event = input::InputEffect<Button>;
 pub type State = input::InputState<Button>;
 
 /// Create the default keybindings for our input state.
